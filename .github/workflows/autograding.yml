@@ -1,0 +1,51 @@
+name: 🚀 Autograding - Collaborative Feature Implementation
+
+on:  
+  pull_request:  
+    types:  
+      - opened  
+      - synchronize  
+
+jobs:  
+  grade:  
+    runs-on: ubuntu-latest  
+
+    steps:  
+
+    # Step 1: Checkout the Repository
+    - name: 📂 Checkout Repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 1
+
+    # Step 2: Validate Feature Implementation
+    - name: ✅ Validate Feature Files
+      run: |  
+        echo "🔍 Checking if 'feature1.js' contains the expected implementation..."
+        if ! grep -q "function feature1" src/components/feature1.js; then  
+          echo "❌ 'feature1.js' does not contain the required 'function feature1' implementation!"
+          exit 1  
+        fi  
+
+        echo "🔍 Checking if 'feature2.js' contains the expected implementation..."
+        if ! grep -q "function feature2" src/components/feature2.js; then  
+          echo "❌ 'feature2.js' does not contain the required 'function feature2' implementation!"
+          exit 1  
+        fi  
+
+        echo "✅ Both 'feature1.js' and 'feature2.js' have the correct implementations!"
+
+    # Step 3: Check for Merge Conflicts
+    - name: 🚧 Merge Conflict Validation
+      run: |  
+        echo "🔍 Searching for merge conflict markers in 'feature1.js'..."
+        if [ "$(grep -o '<<<<<<< HEAD' src/components/feature1.js | wc -l)" -gt 0 ]; then  
+          echo "❌ Merge conflicts detected in 'feature1.js'! Please resolve them before proceeding."
+          exit 1  
+        fi  
+
+        echo "✅ No merge conflicts detected in 'feature1.js'!"
+
+    # Step 4: Final Feedback
+    - name: 🏁 Complete Grading
+      run: echo "🎉 Autograding complete! Great work! 🚀"
